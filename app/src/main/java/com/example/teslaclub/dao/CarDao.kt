@@ -11,14 +11,23 @@ import com.example.teslaclub.cars.Car
 @Dao
 interface CarDao {
     @Insert
-    fun insert(car: Car): Long
+    suspend fun insert(car: Car): Long
 
     @Update
-    fun update(car: Car): Int
+    suspend fun update(car: Car): Int
 
     @Delete
-    fun delete(car: Car): Int
+    suspend fun delete(car: Car): Int
 
     @Query("SELECT * FROM car")
     fun getAll(): LiveData<List<Car>>
+
+    @Query("SELECT * FROM car WHERE ownerId = :ownerId")
+    fun getCarsByOwner(ownerId: Int): LiveData<List<Car>>
+
+    @Query("SELECT * FROM car WHERE ownerId IS NULL")
+    fun getAllAvailableCars(): LiveData<List<Car>>
+
+    @Query("UPDATE car SET ownerId = :ownerId WHERE id = :carId")
+    suspend fun updateOwner(carId: Int, ownerId: Int?)
 }
